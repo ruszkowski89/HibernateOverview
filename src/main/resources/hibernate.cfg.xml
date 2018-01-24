@@ -21,6 +21,7 @@
 
         <!--map model classes-->
         <mapping class="com.ruszkowski89.Hibernate.dto.User"/>
+        <mapping class="com.ruszkowski89.Hibernate.dto.Address" />
 
     </session-factory>
 </hibernate-configuration>

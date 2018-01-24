@@ -1,5 +1,6 @@
 package com.ruszkowski89.Hibernate;
 
+import com.ruszkowski89.Hibernate.dto.Address;
 import com.ruszkowski89.Hibernate.dto.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,11 +21,25 @@ public class HibernateOverviewApp {
 
 
 
-        // SAVING USER TO DATABASE
+        // SAVING USER WITH COLLECTION TO DATABASE
+
+        Address address = new Address();
+        address.setCity("Warsaw");
+        address.setStreet("Marszałkowska");
+        address.setState("Mazowieckie");
+        address.setPostalCode("46-114");
+
+        Address address2 = new Address();
+        address2.setCity("Kraków");
+        address2.setStreet("Poniatowskiego");
+        address2.setState("Malopolskie");
+        address2.setPostalCode("55-123");
 
         User user = new User();
         user.setId(1);
         user.setName("Michal");
+        user.getAddressList().add(address);
+        user.getAddressList().add(address2);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -33,16 +48,14 @@ public class HibernateOverviewApp {
         session.close();
 
 
-
         // RETRIEVING USER OBJECT FROM DATABASE
 
-        user = null;
+        /*user = null;
 
         session = sessionFactory.openSession();
         session.beginTransaction();
         user = session.get(User.class, 1);
-        System.out.println(user.getName());
-
+        session.close();*/
 
 
 
