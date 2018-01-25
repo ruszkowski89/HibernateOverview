@@ -1,10 +1,5 @@
 package com.ruszkowski89.Hibernate.dto;
 
-import org.hibernate.annotations.CollectionId;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.util.*;
 
@@ -25,16 +20,18 @@ public class User {
         @AttributeOverride(name = "postalCode", column = @Column(name = "OFFICE_POSTALCODE"))})
     private Address officeAddress;*/
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column (name = "USERNAME")
     private String name;
-    @ElementCollection
+/*    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "USER_ADDRESS",
             joinColumns = @JoinColumn(name = "Foreign_key"))
     @GenericGenerator(name = "increment-gen", strategy = "increment")
     @CollectionId(columns = {@Column(name = "ID")}, type = @Type(type = "integer"), generator = "increment-gen")
-    private Collection<Address> addressList = new ArrayList<Address>();
+    private Collection<Address> addressList = new ArrayList<Address>();*/
+    @OneToMany(cascade = CascadeType.PERSIST)
+    private Collection<Book> booksList = new ArrayList<Book>();
 
     // CONSTRUCTOR
 
@@ -43,12 +40,13 @@ public class User {
 
     // GETTERS & SETTERS
 
-    public Collection<Address> getAddressList() {
-        return addressList;
+
+    public Collection<Book> getBooksList() {
+        return booksList;
     }
 
-    public void setAddressList(Collection<Address> addressList) {
-        this.addressList = addressList;
+    public void setBooksList(Set<Book> books) {
+        this.booksList = books;
     }
 
     public int getId() {
@@ -66,6 +64,14 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    /*    public Collection<Address> getAddressList() {
+        return addressList;
+    }
+
+    public void setAddressList(Collection<Address> addressList) {
+        this.addressList = addressList;
+    }*/
 
     /*    public Address getHomeAddress() {
         return homeAddress;

@@ -1,6 +1,6 @@
 package com.ruszkowski89.Hibernate;
 
-import com.ruszkowski89.Hibernate.dto.Address;
+import com.ruszkowski89.Hibernate.dto.Book;
 import com.ruszkowski89.Hibernate.dto.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,11 +19,9 @@ public class HibernateOverviewApp {
             .buildMetadata()
             .buildSessionFactory();
 
-
-
         // SAVING USER WITH COLLECTION TO DATABASE
 
-        Address address = new Address();
+        /*Address address = new Address();
         address.setCity("Warsaw");
         address.setStreet("Marszałkowska");
         address.setState("Mazowieckie");
@@ -45,7 +43,7 @@ public class HibernateOverviewApp {
         session.beginTransaction();
         session.save(user);
         session.getTransaction().commit();
-        session.close();
+        session.close();*/
 
 
         // RETRIEVING USER OBJECT FROM DATABASE
@@ -55,9 +53,28 @@ public class HibernateOverviewApp {
         session = sessionFactory.openSession();
         session.beginTransaction();
         user = session.get(User.class, 1);
-        session.close();*/
+        session.close();
+        System.out.println(user.getAddressList().size());*/
 
+        // MAPPING ONE TO ONE RELATION
 
+        User user = new User();
+
+        Book book = new Book();
+        book.setTitle("Tańczący z wilkami");
+
+        Book book2 = new Book();
+        book2.setTitle("1984");
+
+        user.setName("Jacek");
+        user.getBooksList().add(book);
+        user.getBooksList().add(book2);
+
+        Session session2 = sessionFactory.openSession();
+        session2.beginTransaction();
+        session2.persist(user);
+        session2.getTransaction().commit();
+        session2.close();
 
     }
 }

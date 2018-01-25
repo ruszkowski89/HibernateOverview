@@ -11,7 +11,7 @@
         </property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">babajaga4</property>
-        <property name="hibernate.connection.pool_size">1</property>
+        <property name="hibernate.connection.pool_size">3</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</property>
@@ -22,6 +22,7 @@
         <!--map model classes-->
         <mapping class="com.ruszkowski89.Hibernate.dto.User"/>
         <mapping class="com.ruszkowski89.Hibernate.dto.Address" />
+        <mapping class="com.ruszkowski89.Hibernate.dto.Book" />
 
     </session-factory>
 </hibernate-configuration>
