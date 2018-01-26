@@ -58,7 +58,7 @@ public class HibernateOverviewApp {
 
         // MAPPING ONE TO ONE RELATION
 
-        User user = new User();
+        /*User user = new User();
 
         Book book = new Book();
         book.setTitle("Tańczący z wilkami");
@@ -74,7 +74,38 @@ public class HibernateOverviewApp {
         session2.beginTransaction();
         session2.persist(user);
         session2.getTransaction().commit();
-        session2.close();
+        session2.close();*/
 
+        // DELETING/UPDATING OBJECT
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        User user = new User();
+        user.setName("Grzegorz");
+        user.setId(1);
+
+        session.save(user);
+        session.getTransaction().commit();
+        session.close();
+
+        session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        try {
+            User retrievedUser = session.get(User.class, 1);
+            System.out.println("Username before update: " + retrievedUser.getName());
+            retrievedUser.setName("Gregory Drugi");
+            System.out.println("New name is: " + retrievedUser.getName());
+            session.delete(retrievedUser);
+            session.getTransaction().commit();
+            System.out.println("This record should not appear in DB: " + retrievedUser.getName());
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            System.out.println("Something bad happened");
+        } finally {
+            session.close();
+        }
+        
     }
 }
