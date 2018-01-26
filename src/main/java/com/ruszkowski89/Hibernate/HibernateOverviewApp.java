@@ -7,6 +7,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.query.Query;
+
+import java.util.List;
 
 public class HibernateOverviewApp {
     public static void main (String args[]){
@@ -19,7 +22,7 @@ public class HibernateOverviewApp {
             .buildMetadata()
             .buildSessionFactory();
 
-        // SAVING USER WITH COLLECTION TO DATABASE
+        // SAVING USER WITH COLLECTION TO DATABASE ---------------------------------
 
         /*Address address = new Address();
         address.setCity("Warsaw");
@@ -46,7 +49,7 @@ public class HibernateOverviewApp {
         session.close();*/
 
 
-        // RETRIEVING USER OBJECT FROM DATABASE
+        // RETRIEVING USER OBJECT FROM DATABASE -------------------------------------
 
         /*user = null;
 
@@ -56,7 +59,7 @@ public class HibernateOverviewApp {
         session.close();
         System.out.println(user.getAddressList().size());*/
 
-        // MAPPING ONE TO ONE RELATION
+        // MAPPING ONE TO ONE RELATION -----------------------------------------------
 
         /*User user = new User();
 
@@ -76,9 +79,9 @@ public class HibernateOverviewApp {
         session2.getTransaction().commit();
         session2.close();*/
 
-        // DELETING/UPDATING OBJECT
+        // DELETING/UPDATING OBJECT --------------------------------------------------
 
-        Session session = sessionFactory.openSession();
+        /*Session session = sessionFactory.openSession();
         session.beginTransaction();
 
         User user = new User();
@@ -105,7 +108,60 @@ public class HibernateOverviewApp {
             System.out.println("Something bad happened");
         } finally {
             session.close();
-        }
-        
+        }*/
+
+        // HQL BASICS ------------------------------------------------------------------
+
+        /*Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        User user = new User();
+        User user2 = new User();
+        user.setName("Wacek");
+        user.setId(1);
+        user2.setName("Bogdan");
+        user2.setId(2);
+        session.save(user);
+        session.save(user2);
+        session.getTransaction().commit();
+        session.close();
+
+        session = sessionFactory.openSession();
+        session.beginTransaction();
+        Query query = session.createQuery("from User where id < 10");
+        query.setFirstResult(1);
+        List<User> list = query.list();
+        session.getTransaction().commit();
+        session.close();
+
+        for (User someUser : list){
+            System.out.println(someUser.getName());
+        }*/
+
+        // HQL PARAMETER INJECTION -------------------------------------------------------
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        User user = new User();
+        User user2 = new User();
+        user.setName("Wacek");
+        user.setId(1);
+        user2.setName("Bogdan");
+        user2.setId(2);
+        session.save(user);
+        session.save(user2);
+        session.getTransaction().commit();
+        session.close();
+
+        session = sessionFactory.openSession();
+        session.beginTransaction();
+        String userInput = "Wacek";
+        Query query = session.createQuery("from User where name = :name");
+        query.setParameter("name", userInput);
+
+        User newUser = (User) query.getSingleResult();
+        session.getTransaction().commit();
+        session.close();
+
+        System.out.println(newUser.getName());
     }
 }
