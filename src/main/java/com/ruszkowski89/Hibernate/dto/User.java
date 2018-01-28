@@ -1,17 +1,26 @@
 package com.ruszkowski89.Hibernate.dto;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.jws.soap.SOAPBinding;
 import javax.persistence.*;
 import java.util.*;
 
+@NamedQuery(name = "User.selectByName", query = "from User where name = :name")
+@NamedNativeQuery(name = "User.selectById", query = "SELECT * FROM user WHERE id = :id", resultClass = User.class)
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Entity (name = "User")
 public class User {
 
     /*    @Transient
     @Temporal(TemporalType.DATE)
     private Date created;
+
     // single Attribute Override example
     @AttributeOverride(name = "street", column = @Column(name = "HOME_STREET"))
     private Address homeAddress;
+
     // multiple AttributeOverride inside AttributeOverrides example
     @AttributeOverrides({
         @AttributeOverride(name = "street", column = @Column(name = "OFFICE_STREET")),

@@ -1,14 +1,23 @@
 package com.ruszkowski89.Hibernate;
 
+import com.ruszkowski89.Hibernate.dto.Address;
 import com.ruszkowski89.Hibernate.dto.Book;
 import com.ruszkowski89.Hibernate.dto.User;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class HibernateOverviewApp {
@@ -22,27 +31,35 @@ public class HibernateOverviewApp {
             .buildMetadata()
             .buildSessionFactory();
 
+        // ADDING SOME HARDCODED USERS TO DB FOR TESTING PURPOSES
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        for (int i=0; i<10; i++){
+            User user = new User();
+            user.setName("User " + (i+1));
+            user.setId(i+1);
+            session.save(user);
+        }
+
+        session.getTransaction().commit();
+        session.close();
+
         // SAVING USER WITH COLLECTION TO DATABASE ---------------------------------
 
-        /*Address address = new Address();
-        address.setCity("Warsaw");
-        address.setStreet("Marszałkowska");
-        address.setState("Mazowieckie");
-        address.setPostalCode("46-114");
-
+        /*Address address1 = new Address();
+        address1.setStreet("Marszałkowska");
         Address address2 = new Address();
-        address2.setCity("Kraków");
-        address2.setStreet("Poniatowskiego");
-        address2.setState("Malopolskie");
-        address2.setPostalCode("55-123");
+        address2.setStreet("Wiejska");
 
         User user = new User();
         user.setId(1);
         user.setName("Michal");
-        user.getAddressList().add(address);
+        user.getAddressList().add(address1);
         user.getAddressList().add(address2);
 
-        Session session = sessionFactory.openSession();
+        Session session1 = sessionFactory.openSession();
         session.beginTransaction();
         session.save(user);
         session.getTransaction().commit();
@@ -129,7 +146,7 @@ public class HibernateOverviewApp {
         session.beginTransaction();
         Query query = session.createQuery("from User where id < 10");
         query.setFirstResult(1);
-        List<User> list = query.list();
+        List<User> list = query.getResultList();
         session.getTransaction().commit();
         session.close();
 
@@ -139,7 +156,7 @@ public class HibernateOverviewApp {
 
         // HQL PARAMETER INJECTION -------------------------------------------------------
 
-        Session session = sessionFactory.openSession();
+        /*Session session = sessionFactory.openSession();
         session.beginTransaction();
         User user = new User();
         User user2 = new User();
@@ -162,6 +179,79 @@ public class HibernateOverviewApp {
         session.getTransaction().commit();
         session.close();
 
-        System.out.println(newUser.getName());
+        System.out.println(newUser.getName());*/
+
+        // NAMED HQL PARAMETERS ----------------------------------------------------
+
+        /*Session session1 = sessionFactory.openSession();
+        session1.beginTransaction();
+
+        String userInput = "User 5";
+        Query query = session1.getNamedQuery("User.selectByName");
+        query.setParameter("name", userInput);
+
+        List<User> list = query.getResultList();
+        session1.getTransaction().commit();
+        session1.close();
+
+        for (User user : list){
+            System.out.println(user.getName());
+        }*/
+
+        // NAMED SQL PARAMETER
+
+        Session session1 = sessionFactory.openSession();
+        session1.beginTransaction();
+
+        int userInput = 5;
+        Query query = session1.getNamedQuery("User.selectById")
+                                .setCacheable(true);
+        query.setParameter("id", userInput);
+
+        List<User> list = query.getResultList();
+        session1.getTransaction().commit();
+        session1.close();
+
+        for (User user : list){
+            System.out.println(user.getName());
+        }
+
+        // CRITERIA API
+
+        /*Session session1 = sessionFactory.openSession();
+        session1.beginTransaction();
+
+        CriteriaBuilder criteriaBuilder = session1.getCriteriaBuilder();
+
+        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+        Root<User> user = criteriaQuery.from(User.class);
+        criteriaQuery.where(criteriaBuilder.equal(user.get("name"), "User 5"));
+
+        TypedQuery<User> typedQuery = session1.createQuery(criteriaQuery);
+        List<User> list = typedQuery.getResultList();
+
+        session1.getTransaction().commit();
+        session1.close();
+
+        for (User tempUser : list){
+            System.out.println(tempUser.getName() + " " + tempUser.getId());
+        }*/
+
+        // SECOND LEVEL CACHE TEST
+
+        /*Session session1 = sessionFactory.openSession();
+        session1.beginTransaction();
+        User user = session1.get(User.class, 3);
+        System.out.println(user.getName());
+        session1.getTransaction().commit();
+        session1.close();
+
+        Session session2 = sessionFactory.openSession();
+        session2.beginTransaction();
+        User user2 = session2.get(User.class, 3);
+        System.out.println(user.getName());
+        session2.getTransaction().commit();
+        session2.close();*/
+
     }
 }
